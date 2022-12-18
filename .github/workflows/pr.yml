@@ -18,10 +18,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-      - name: Build debug
-        run: ./gradlew assembleDebug
       - name: Unit-test
-        run: ./gradlew testDebug
+        run: ./gradlew test
   ktlint:
     name: "Check project by ktlint"
     runs-on: ubuntu-latest
