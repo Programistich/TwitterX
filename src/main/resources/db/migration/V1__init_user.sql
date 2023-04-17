@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS users (
+    id INT NOT NULL AUTO_INCREMENT,
+    chat_id INTEGER NOT NULL,
+    PRIMARY KEY (id, chat_id)
+);
