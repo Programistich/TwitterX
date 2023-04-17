@@ -1,3 +1,5 @@
 package com.programistich.twitterx.models
 
-data class Chat()
+data class Chat(
+    val chatId: String
+)

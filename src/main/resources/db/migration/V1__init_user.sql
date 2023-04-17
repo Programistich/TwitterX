@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS users (
-    id INT NOT NULL AUTO_INCREMENT,
-    chat_id INTEGER NOT NULL,
+CREATE TABLE IF NOT EXISTS chats (
+    id SERIAL NOT NULL,
+    chat_id VARCHAR(100) NOT NULL,
     PRIMARY KEY (id, chat_id)
 );

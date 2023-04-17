@@ -1,0 +1,35 @@
+version: "3.3"
+
+services:
+  twitter-db:
+    container_name: twitter-db
+    image: postgres:14
+    restart: always
+    networks:
+      twitter-net:
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    ports:
+      - "5434:5432"
+
+  twitter:
+    container_name: twitter
+    build:
+      dockerfile: Dockerfile
+      context: .
+    restart: always
+    networks:
+      twitter-net:
+    environment:
+      - TELEGRAM_BOT_TOKEN
+      - TELEGRAM_BOT_USERNAME
+      - TWITTER_BEARER_TOKEN
+    depends_on:
+      - twitter-db
+
+networks:
+  twitter-net:

@@ -1,4 +1,4 @@
-package com.programistich.twitterx.telegram.ktx
+package com.programistich.twitterx.ktx
 
 import org.telegram.telegrambots.meta.api.objects.Update
 

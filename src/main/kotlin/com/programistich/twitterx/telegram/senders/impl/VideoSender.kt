@@ -1,10 +1,10 @@
-package com.programistich.twitterx.telegram.senders
+package com.programistich.twitterx.telegram.senders.impl
 
-import com.programistich.twitterx.ktx.getBestUrl
+import com.programistich.twitterx.ktx.TweetKtx.getVideoUrl
 import com.programistich.twitterx.models.Chat
 import com.programistich.twitterx.models.TweetData
 import com.programistich.twitterx.telegram.models.Priority
-import com.twitter.clientlib.model.Video
+import com.programistich.twitterx.telegram.senders.Sender
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
@@ -12,24 +12,21 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component class VideoSender : Sender {
     override fun isCanSend(data: TweetData): Priority {
-        val media = data.media
-
-        // check what is only 1 photo
-        if (media.size != 1) return Priority.NONE
-
-        // check that media is photo
-        if (media.first().type != "video") return Priority.NONE
-        return Priority.HIGH
+        return when {
+            data.media.size != 1 -> Priority.NONE
+            data.media.first().type == "video" -> Priority.HIGH
+            data.media.first().type == "animated_gif" -> Priority.HIGH
+            else -> Priority.NONE
+        }
     }
 
     override suspend fun send(data: TweetData, chat: Chat): suspend (AbsSender) -> Unit {
-        val tweetVideo = data.media.first() as Video
-        val tweetPhotoUrl = tweetVideo.getBestUrl()
+        val tweetVideo = data.media.first().getVideoUrl()
         val text = data.tweet.text
 
         val message = SendVideo().apply {
             chatId = chat.chatId
-            video = InputFile(tweetPhotoUrl)
+            video = InputFile(tweetVideo)
             caption = text
         }
 

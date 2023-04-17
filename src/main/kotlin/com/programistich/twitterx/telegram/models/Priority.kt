@@ -1,6 +1,6 @@
-package com.programistich.twitterx.telegram.executors
+package com.programistich.twitterx.telegram.models
 
-enum class ExecutePriority(val value: Int) {
+enum class Priority(val value: Int) {
     NONE(-1),
     LOW(0),
     NORMAL(1),

@@ -1,53 +1,36 @@
 package com.programistich.twitterx.telegram.executors.inline
 
 import com.programistich.twitterx.ktx.Constants
-import com.programistich.twitterx.telegram.executors.ExecutePriority
 import com.programistich.twitterx.telegram.executors.Executor
+import com.programistich.twitterx.telegram.models.Priority
+import com.programistich.twitterx.twitter.TwitterService
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent
-import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle
 import org.telegram.telegrambots.meta.bots.AbsSender
 
-@Component
-class TwitterLinkInlineExecutor : Executor {
-    override fun isCanExecute(update: Update): ExecutePriority {
+@Component class TweetInlineExecutor(
+    private val twitterService: TwitterService,
+) : Executor {
+    override fun isCanExecute(update: Update): Priority {
         val query = update.inlineQuery?.query
-        val regex = Constants.TWITTER_LINK_REGEX.toRegex()
 
         return when {
-            query == null -> ExecutePriority.NONE
-            !update.hasInlineQuery() -> ExecutePriority.NONE
-            regex.matches(query) -> ExecutePriority.HIGH
-            else -> ExecutePriority.NONE
+            query == null -> Priority.NONE
+            !update.hasInlineQuery() -> Priority.NONE
+            Constants.TWEET_LINK_REGEX.matches(query) -> Priority.HIGH
+            else -> Priority.NONE
         }
     }
 
     override suspend fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val queryId = update.inlineQuery?.id ?: return {}
-        val query = update.inlineQuery?.query ?: return {}
+//        val queryId = update.inlineQuery?.id ?: return {}
+//        val query = update.inlineQuery?.query ?: return {}
+//
+//        val match = Constants.TWEET_LINK_REGEX.find(query) ?: return {}
+//        val tweetId = match.groupValues[Constants.TWEET_LINK_REGEX_GROUP_TWEET_ID]
+//        val tweets = twitterService.getTweetById(tweetId)
+//
 
-        val article = InlineQueryResultArticle().apply {
-            id = "1"
-            title = "Twitter link"
-            inputMessageContent = InputTextMessageContent().apply {
-                messageText = query
-            }
-            url = query
-            hideUrl = true
-        }
-
-        val answerInlineQuery = AnswerInlineQuery().apply {
-            inlineQueryId = queryId
-            results = listOf(article)
-            switchPmText = "Search1"
-            switchPmParameter = "search2"
-        }
-
-        return {
-                telegramBot ->
-            telegramBot.execute(answerInlineQuery)
-        }
+        return {}
     }
 }

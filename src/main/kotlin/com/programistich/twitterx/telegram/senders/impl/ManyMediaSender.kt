@@ -1,11 +1,12 @@
-package com.programistich.twitterx.telegram.senders
+package com.programistich.twitterx.telegram.senders.impl
 
-import com.programistich.twitterx.ktx.getBestUrl
+import com.programistich.twitterx.ktx.TweetKtx.getBestUrl
+import com.programistich.twitterx.ktx.TweetKtx.getVideoUrl
 import com.programistich.twitterx.models.Chat
 import com.programistich.twitterx.models.TweetData
 import com.programistich.twitterx.telegram.models.Priority
+import com.programistich.twitterx.telegram.senders.Sender
 import com.twitter.clientlib.model.Photo
-import com.twitter.clientlib.model.Video
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
@@ -27,9 +28,8 @@ import org.telegram.telegrambots.meta.bots.AbsSender
                     url?.let { InputMediaPhoto(it) }
                 }
 
-                "video" -> {
-                    val video = it as Video
-                    val url = video.getBestUrl()
+                "video", "animated_gif" -> {
+                    val url = it.getVideoUrl()
                     url?.let { InputMediaVideo(it) }
                 }
 
@@ -37,7 +37,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
             }
         }
 
-        if (tweetMedias.isEmpty()) return { }
+        if (tweetMedias.isEmpty()) return {}
 
         val message = SendMediaGroup().apply {
             chatId = chat.chatId
