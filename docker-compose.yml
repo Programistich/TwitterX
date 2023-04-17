@@ -31,5 +31,9 @@ services:
     depends_on:
       - twitter-db
 
+volumes:
+  postgres-data:
+  pgadmin-data:
+
 networks:
   twitter-net:
