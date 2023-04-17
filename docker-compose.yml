@@ -25,9 +25,13 @@ services:
     networks:
       twitter-net:
     environment:
+      - JDBC_URL=jdbc:postgresql://twitter-db:5432/${POSTGRES_DB}
       - TELEGRAM_BOT_TOKEN
       - TELEGRAM_BOT_USERNAME
       - TWITTER_BEARER_TOKEN
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
     depends_on:
       - twitter-db
 
