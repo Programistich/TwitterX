@@ -1,4 +1,4 @@
-FROM gradle:7.4.1-jdk11-alpine AS build
+FROM gradle:7.6.1-jdk17-alpine AS build
 COPY --chown=gradle:gradle . /app
 WORKDIR /app
 ENTRYPOINT ["gradle", "bootRun"]
