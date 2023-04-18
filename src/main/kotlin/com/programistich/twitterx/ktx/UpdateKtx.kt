@@ -6,6 +6,7 @@ object UpdateKtx {
     fun Update.getChatId(): String? {
         return when {
             this.hasMessage() -> this.message.chatId.toString()
+            this.hasChannelPost() -> this.channelPost.chatId.toString()
             else -> null
         }
     }

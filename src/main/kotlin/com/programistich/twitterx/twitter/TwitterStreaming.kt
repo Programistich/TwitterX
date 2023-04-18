@@ -25,6 +25,10 @@ import java.io.BufferedReader
     fun startStreaming() {
         if (local == "true") return
         println("Start streaming")
+        processStreaming()
+    }
+
+    private fun processStreaming() {
         val inputStream = twitterService.getStream()
         val bufferedReader = BufferedReader(inputStream.reader())
         bufferedReader.forEachLine { content ->
@@ -36,6 +40,7 @@ import java.io.BufferedReader
             }
             response.onFailure {
                 println("Error when tweet stream: $it")
+                processStreaming()
             }
         }
     }
