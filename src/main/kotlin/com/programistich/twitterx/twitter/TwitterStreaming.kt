@@ -24,11 +24,11 @@ import java.io.BufferedReader
     @EventListener(ApplicationReadyEvent::class)
     fun startStreaming() {
         if (local == "true") return
-        println("Start streaming")
         processStreaming()
     }
 
     private fun processStreaming() {
+        println("Start streaming")
         val inputStream = twitterService.getStream()
         val bufferedReader = BufferedReader(inputStream.reader())
         bufferedReader.forEachLine { content ->
