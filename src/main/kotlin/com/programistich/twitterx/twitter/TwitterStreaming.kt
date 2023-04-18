@@ -5,6 +5,7 @@ import com.programistich.twitterx.telegram.service.TelegramBotSender
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -15,12 +16,15 @@ import java.io.BufferedReader
     private val twitterService: TwitterService,
     private val telegramBotSender: TelegramBotSender,
     private val telegramBot: TelegramLongPollingBot,
-    private val chatRepository: ChatRepository
+    private val chatRepository: ChatRepository,
+    @Value("\${telegram.bot.local}") private val local: String,
 ) {
     private val scope = CoroutineScope(Dispatchers.Default)
 
     @EventListener(ApplicationReadyEvent::class)
     fun startStreaming() {
+        if (local == "true") return
+        println("Start streaming")
         val inputStream = twitterService.getStream()
         val bufferedReader = BufferedReader(inputStream.reader())
         bufferedReader.forEachLine { content ->
