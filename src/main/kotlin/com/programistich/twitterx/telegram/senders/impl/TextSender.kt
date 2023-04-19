@@ -7,6 +7,7 @@ import com.programistich.twitterx.telegram.models.Priority
 import com.programistich.twitterx.telegram.senders.Sender
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
@@ -20,12 +21,13 @@ class TextSender : Sender {
         }
     }
 
-    override suspend fun send(data: TweetData, chat: Chat): suspend (AbsSender) -> Unit {
+    override suspend fun send(data: TweetData, chat: Chat, bot: AbsSender, replyId: Int?): Message {
         val message = SendMessage().apply {
             chatId = chat.chatId
             text = data.toText()
+            replyToMessageId = replyId
         }
 
-        return { sender -> sender.execute(message) }
+        return bot.execute(message)
     }
 }

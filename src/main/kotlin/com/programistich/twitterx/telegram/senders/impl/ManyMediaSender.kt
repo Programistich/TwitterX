@@ -10,6 +10,7 @@ import com.programistich.twitterx.telegram.senders.Sender
 import com.twitter.clientlib.model.Photo
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaVideo
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -20,7 +21,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
         return Priority.NONE
     }
 
-    override suspend fun send(data: TweetData, chat: Chat): suspend (AbsSender) -> Unit {
+    override suspend fun send(data: TweetData, chat: Chat, bot: AbsSender, replyId: Int?): Message {
         val tweetMedias = data.media.mapNotNull {
             when (it.type) {
                 "photo" -> {
@@ -45,8 +46,9 @@ import org.telegram.telegrambots.meta.bots.AbsSender
         val message = SendMediaGroup().apply {
             chatId = chat.chatId
             medias = tweetMedias
+            replyToMessageId = replyId
         }
 
-        return { sender -> sender.execute(message) }
+        return bot.execute(message).first()
     }
 }

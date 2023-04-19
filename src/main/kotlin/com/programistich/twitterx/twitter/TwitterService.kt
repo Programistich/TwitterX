@@ -96,6 +96,26 @@ import java.io.InputStream
         }
     }
 
+    fun getBranchTweets(id: String, tweets: MutableList<TweetData> = mutableListOf()): Result<List<TweetData>> {
+        val dataResult = getTweetById(id)
+
+        dataResult.onSuccess { data ->
+            tweets.add(data)
+            val nextTweetId = data
+                .tweet
+                .referencedTweets
+                ?.firstOrNull()
+                ?.id
+                ?: return Result.success(tweets)
+
+            return getBranchTweets(nextTweetId, tweets)
+        }.onFailure {
+            return Result.failure(it)
+        }
+
+        return Result.failure(Exception("Tweet not found"))
+    }
+
     fun getTweetByStreamJson(json: String): Result<TweetData> {
         return runCatching {
             val response = StreamingTweetResponse.fromJson(json) ?: return Result.failure(Exception("Tweet not found"))
@@ -124,6 +144,25 @@ import java.io.InputStream
             val data = TweetData(tweet, poll, user, media)
             return Result.success(data)
         }
+    }
+
+    fun getTweetBranchByStreamJson(json: String): Result<List<TweetData>> {
+        val tweets = mutableListOf<TweetData>()
+        val dataResult = getTweetByStreamJson(json)
+        dataResult.onSuccess {
+            tweets.add(it)
+            val nextTweetId = it
+                .tweet
+                .referencedTweets
+                ?.firstOrNull()
+                ?.id
+                ?: return Result.success(tweets)
+
+            return getBranchTweets(nextTweetId, tweets)
+        }.onFailure {
+            return Result.failure(it)
+        }
+        return Result.failure(Exception("Tweet not found"))
     }
 
     private fun existError(errors: List<Problem>?): Boolean {

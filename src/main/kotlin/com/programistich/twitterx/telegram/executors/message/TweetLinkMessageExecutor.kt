@@ -33,11 +33,13 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
         val match = Constants.TWEET_LINK_REGEX.find(message) ?: return {}
         val tweetId = match.groupValues[Constants.TWEET_LINK_REGEX_GROUP_TWEET_ID]
-        val tweets = twitterService.getTweetById(tweetId).getOrElse { exception ->
+        val tweets = twitterService.getBranchTweets(tweetId).getOrElse { exception ->
             println(exception)
             return {}
         }
 
-        return { telegramBotSender.send(tweets, chat, it) }
+        return {
+            telegramBotSender.send(tweets.reversed(), chat, it)
+        }
     }
 }

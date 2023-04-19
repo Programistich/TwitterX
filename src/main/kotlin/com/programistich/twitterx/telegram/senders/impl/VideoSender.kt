@@ -9,6 +9,7 @@ import com.programistich.twitterx.telegram.senders.Sender
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component class VideoSender : Sender {
@@ -21,15 +22,16 @@ import org.telegram.telegrambots.meta.bots.AbsSender
         }
     }
 
-    override suspend fun send(data: TweetData, chat: Chat): suspend (AbsSender) -> Unit {
+    override suspend fun send(data: TweetData, chat: Chat, bot: AbsSender, replyId: Int?): Message {
         val tweetVideo = data.media.first().getVideoUrl()
 
         val message = SendVideo().apply {
             chatId = chat.chatId
             video = InputFile(tweetVideo)
             caption = data.toText()
+            replyToMessageId = replyId
         }
 
-        return { sender -> sender.execute(message) }
+        return bot.execute(message)
     }
 }

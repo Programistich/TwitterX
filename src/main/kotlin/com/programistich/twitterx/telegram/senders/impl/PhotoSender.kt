@@ -9,6 +9,7 @@ import com.twitter.clientlib.model.Photo
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component class PhotoSender : Sender {
@@ -20,7 +21,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
         }
     }
 
-    override suspend fun send(data: TweetData, chat: Chat): suspend (AbsSender) -> Unit {
+    override suspend fun send(data: TweetData, chat: Chat, bot: AbsSender, replyId: Int?): Message {
         val tweetPhoto = data.media.first() as Photo
         val tweetPhotoUrl = tweetPhoto.url.toString()
         val text = data.toText()
@@ -29,8 +30,9 @@ import org.telegram.telegrambots.meta.bots.AbsSender
             chatId = chat.chatId
             photo = InputFile(tweetPhotoUrl)
             caption = text
+            replyToMessageId = replyId
         }
 
-        return { sender -> sender.execute(message) }
+        return bot.execute(message)
     }
 }

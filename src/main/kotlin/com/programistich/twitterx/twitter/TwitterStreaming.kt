@@ -28,20 +28,25 @@ import java.io.BufferedReader
     }
 
     private fun processStreaming() {
-        println("Start streaming")
-        val inputStream = twitterService.getStream()
-        val bufferedReader = BufferedReader(inputStream.reader())
-        bufferedReader.forEachLine { content ->
-            if (content.isEmpty()) return@forEachLine
-            val response = twitterService.getTweetByStreamJson(content)
-            val chats = chatRepository.getAllChats()
-            response.onSuccess { result ->
-                scope.launch { telegramBotSender.send(result, chats).invoke(telegramBot) }
+        runCatching {
+            println("Start streaming")
+            val inputStream = twitterService.getStream()
+            val bufferedReader = BufferedReader(inputStream.reader())
+            bufferedReader.forEachLine { content ->
+                if (content.isEmpty()) return@forEachLine
+                val response = twitterService.getTweetBranchByStreamJson(content)
+                val chats = chatRepository.getAllChats()
+                response.onSuccess { result ->
+                    scope.launch { telegramBotSender.send(result.reversed(), chats).invoke(telegramBot) }
+                }
+                response.onFailure {
+                    println("Error when tweet stream: $it")
+                    processStreaming()
+                }
             }
-            response.onFailure {
-                println("Error when tweet stream: $it")
-                processStreaming()
-            }
+        }.onFailure {
+            println("Error when tweet stream: $it")
+            processStreaming()
         }
     }
 }
