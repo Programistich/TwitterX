@@ -38,6 +38,6 @@ import org.telegram.telegrambots.meta.bots.AbsSender
             return {}
         }
 
-        return { telegramBotSender.send(tweets, chat).invoke(it) }
+        return { telegramBotSender.send(tweets, chat, it) }
     }
 }

@@ -1,5 +1,6 @@
 package com.programistich.twitterx.telegram.senders.impl
 
+import com.programistich.twitterx.ktx.TweetKtx.toText
 import com.programistich.twitterx.models.Chat
 import com.programistich.twitterx.models.TweetData
 import com.programistich.twitterx.telegram.models.Priority
@@ -17,7 +18,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
     }
 
     override suspend fun send(data: TweetData, chat: Chat): suspend (AbsSender) -> Unit {
-        val tweetText = data.tweet.text
+        val tweetText = data.toText()
         val pollOptions = data.poll?.options?.map { it.label } ?: return { }
 
         val poll = SendPoll().apply {

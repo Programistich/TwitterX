@@ -1,5 +1,6 @@
 package com.programistich.twitterx.ktx
 
+import com.programistich.twitterx.models.TweetData
 import com.twitter.clientlib.model.AnimatedGif
 import com.twitter.clientlib.model.Media
 import com.twitter.clientlib.model.Photo
@@ -36,5 +37,11 @@ object TweetKtx {
             is AnimatedGif -> this.getBestUrl()
             else -> null
         }
+    }
+
+    fun TweetData.toText(): String {
+        val username = this.user.username
+        val text = this.tweet.text
+        return "Tweet by $username:\n\n$text"
     }
 }

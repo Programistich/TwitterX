@@ -1,5 +1,6 @@
 package com.programistich.twitterx.telegram.senders.impl
 
+import com.programistich.twitterx.ktx.TweetKtx.toText
 import com.programistich.twitterx.models.Chat
 import com.programistich.twitterx.models.TweetData
 import com.programistich.twitterx.telegram.models.Priority
@@ -22,7 +23,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
     override suspend fun send(data: TweetData, chat: Chat): suspend (AbsSender) -> Unit {
         val tweetPhoto = data.media.first() as Photo
         val tweetPhotoUrl = tweetPhoto.url.toString()
-        val text = data.tweet.text
+        val text = data.toText()
 
         val message = SendPhoto().apply {
             chatId = chat.chatId

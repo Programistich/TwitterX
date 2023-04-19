@@ -20,21 +20,19 @@ class TelegramBotSender(
     }
 
     suspend fun send(tweet: TweetData, chats: List<Chat>): suspend (AbsSender) -> Unit {
-        return {
-            chats.forEach { chat -> send(tweet, chat) }
+        return { bot ->
+            chats.forEach { chat -> send(tweet, chat, bot) }
         }
     }
 
-    suspend fun send(tweet: TweetData, chat: Chat): suspend (AbsSender) -> Unit {
-        val sender = chooseSender(tweet) ?: return {}
-
+    suspend fun send(tweet: TweetData, chat: Chat, bot: AbsSender) {
+        val sender = chooseSender(tweet) ?: return
         println("For tweet: $tweet choose sender: $sender")
-        return { bot ->
-            kotlin.runCatching {
-                sender.send(tweet, chat).invoke(bot)
-            }.onFailure { exception ->
-                println("Error $exception when send tweet: $tweet to chat: $chat")
-            }
+
+        runCatching {
+            sender.send(tweet, chat).invoke(bot)
+        }.onFailure { exception ->
+            println("Error $exception when send tweet: $tweet to chat: $chat")
         }
     }
 }

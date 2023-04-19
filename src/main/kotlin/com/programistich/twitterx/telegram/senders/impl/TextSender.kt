@@ -1,5 +1,6 @@
 package com.programistich.twitterx.telegram.senders.impl
 
+import com.programistich.twitterx.ktx.TweetKtx.toText
 import com.programistich.twitterx.models.Chat
 import com.programistich.twitterx.models.TweetData
 import com.programistich.twitterx.telegram.models.Priority
@@ -20,11 +21,9 @@ class TextSender : Sender {
     }
 
     override suspend fun send(data: TweetData, chat: Chat): suspend (AbsSender) -> Unit {
-        val tweetText = data.tweet.text
-
         val message = SendMessage().apply {
             chatId = chat.chatId
-            text = tweetText
+            text = data.toText()
         }
 
         return { sender -> sender.execute(message) }

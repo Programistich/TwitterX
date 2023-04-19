@@ -2,6 +2,7 @@ package com.programistich.twitterx.telegram.senders.impl
 
 import com.programistich.twitterx.ktx.TweetKtx.getBestUrl
 import com.programistich.twitterx.ktx.TweetKtx.getVideoUrl
+import com.programistich.twitterx.ktx.TweetKtx.toText
 import com.programistich.twitterx.models.Chat
 import com.programistich.twitterx.models.TweetData
 import com.programistich.twitterx.telegram.models.Priority
@@ -35,9 +36,11 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
                 else -> null
             }
-        }
+        }.toMutableList()
 
-        if (tweetMedias.isEmpty()) return {}
+        val firstMedia = tweetMedias.first()
+        firstMedia.caption = data.toText()
+        tweetMedias[0] = firstMedia
 
         val message = SendMediaGroup().apply {
             chatId = chat.chatId

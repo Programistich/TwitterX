@@ -164,6 +164,8 @@ import java.io.InputStream
             .tweetFields(tweetFields)
             .userFields(userFields)
             .expansions(expansions)
+            .mediaFields(mediaFields)
+            .pollFields(pollFields)
             .execute()
 
         inputStream = localTwitterApi
